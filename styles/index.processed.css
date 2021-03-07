@@ -100,16 +100,20 @@ body {
   min-width: 30%;
 }
 
-.time-length-60 {
-  height: 60pt;
-}
-
-.time-length-30 {
-  height: 30pt;
-}
-
 .event-container > :first-child {
   margin-left: 80pt;
+}
+
+.grab {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
+}
+
+.event-title {
+  cursor: text;
 }
 
 .list-group-item {
