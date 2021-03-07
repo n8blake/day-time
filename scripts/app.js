@@ -70,6 +70,8 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	$scope.dragging = (event) => {
 		console.log("dragging");
 		$scope.activeEvent = event;
+		document.querySelector("#id-" + event.id).classList.remove('grab');
+		document.querySelector("#id-" + event.id).classList.add('grabbing');
 	}
 
 	$scope.dropped = (time) => {
@@ -84,6 +86,8 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		let newEndTime = moment().hour(time).minutes(minutes).seconds(0).valueOf();
 		events.updateEventTime(receivedEvent.id, newStartTime, false);
 		events.updateEventTime(receivedEvent.id, newEndTime, true);
+		document.querySelector("#id-" + receivedEvent.id).classList.remove('grabbing');
+		document.querySelector("#id-" + receivedEvent.id).classList.add('grab');
 	}
 
 	$scope.getEvents = (timeblock) => {
