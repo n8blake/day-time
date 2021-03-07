@@ -1,5 +1,7 @@
 var app = angular.module("App", ['ngDrag']);
 
+const MAX_TITLE_LENGTH = 64;
+
 app.controller("DayCtrl", ['$scope', function($scope){
 	let today = moment();
 	let tomorrow = moment().add(24, 'hour');
@@ -9,9 +11,9 @@ app.controller("DayCtrl", ['$scope', function($scope){
 	$scope.tomorrow = tomorrow.format('LL');
 }]);
 
-app.controller("AppCtrl", ['$scope', 'events', function($scope, events) {
+app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filter, events) {
 	
-	$scope.activeTask = {};
+	$scope.activeEvent = {};
 	$scope.tasks = [];
 	
 	$scope.events = events.getEvents();
@@ -31,37 +33,50 @@ app.controller("AppCtrl", ['$scope', 'events', function($scope, events) {
 	}
 
 	$scope.newEvent = (time) => {
-		console.log(time);
+		//console.log(time);
 		let startTime = moment().hour(time).minutes(0).valueOf();
 		let endTime = moment().hour(time + 1).minutes(0).valueOf();
 		let newEvent = new CalendarEvent(startTime, endTime);
 		newEvent.title = "Appointment";
 		events.addEvent(newEvent);
+		console.log("Created new event: " + newEvent.id);
 	};
 
 	$scope.editEvent = (event) => {
 		console.log(event.id);
-		document.querySelector("#id-" + event.id).draggable = false;
-		//document.querySelector("#title-" + event.id).contenteditable = true;
+		console.log(event.title);
+		let activeEvent = document.querySelector("#id-" + event.id);
+		activeEvent.draggable = false;
+		$scope.activeEvent = activeEvent;
+		if(event.title.length > MAX_TITLE_LENGTH){
+			document.querySelector("#title-" + event.id).textContent = event.title;	
+		}
+
 	}
 
 	$scope.endEdit = (event) => {
-		console.log(event);
-		console.log("blur");
+		//console.log(event);
+		let activeEvent = document.querySelector("#id-" + event.id);
+		let activeEventTitle = document.querySelector("#title-" + event.id).textContent;
+		console.log(activeEventTitle);
+		events.updateEventTitle(event.id, activeEventTitle);
+		console.log(event.id + " updated");
+		$scope.activeEvent.draggable = true;
+		$scope.activeEvent = {};
+		console.log($filter('truncate')(event.title));
+		document.querySelector("#title-" + event.id).textContent = $filter('truncate')(event.title);
 	}
-
-	$scope.movingEvent = {};
 
 	$scope.dragging = (event) => {
 		console.log("dragging");
-		$scope.movingEvent = event;
+		$scope.activeEvent = event;
 	}
 
 	$scope.dropped = (time) => {
 		console.log("Dropped!");
 		console.log(time);
-		let receivedEvent = $scope.movingEvent;
-		$scope.movingEvent = {};
+		let receivedEvent = $scope.activeEvent;
+		$scope.activeEvent = {};
 		console.log(receivedEvent);
 
 		let newStartTime = moment().hour(time).minutes(0).seconds(0).valueOf();
@@ -73,6 +88,11 @@ app.controller("AppCtrl", ['$scope', 'events', function($scope, events) {
 
 	$scope.getEvents = (timeblock) => {
 		return events.getEventsForTimeblock(timeblock);
+	}
+
+	$scope.deleteEvent = (event) => {
+		console.log("Deleting " + event.id);
+		events.deleteEvent(event.id);
 	}
 
 }]);
@@ -89,11 +109,16 @@ app.factory('events', [function(){
 	}
 
 	obj.deleteEvent = (eventId) => {
-		obj.events.forEach(event => {
-			if(event.id === eventId){
-				obj.events.splice(events.indexOf(event), 1);
-			}
-		});
+		console.log("EVENTID: " + eventId);
+		let event = getEventById(eventId);
+		console.log(event);
+		console.log("INDEX: " + obj.events.indexOf(event));
+		obj.events.splice(obj.events.indexOf(event), 1);
+		saveEvents();
+	}
+
+	obj.updateEventTitle = (eventId, title) => {
+		getEventById(eventId).title = title;
 		saveEvents();
 	}
 
@@ -128,6 +153,19 @@ app.factory('events', [function(){
 		return obj.events;
 	}
 
+	const getEventById = (id) => {
+		var foundEvent = null;
+		obj.events.forEach(event => {
+			if(event.id === id){
+				console.log(event);
+				console.log(obj.events.indexOf(event));
+				foundEvent = obj.events[obj.events.indexOf(event)];
+			};
+		});
+		return foundEvent;
+	}
+
+
 	const getEvents = () => {
 		let events = localStorage.getItem('events');
 		if(events === null){
@@ -152,6 +190,18 @@ app.filter('numberAsTime', function() {
 	//console.log(param);
 	return function(hour) {
 		return moment().hour(hour).minute(0).format('h:mm a');
+	};
+});
+
+app.filter('truncate', function() {
+	//console.log(param);
+	return function(title) {
+		if(title.length > MAX_TITLE_LENGTH){
+			let str = title.slice(0, MAX_TITLE_LENGTH - 4);
+			str += "...";
+			return str;	
+		} 
+		return title;
 	};
 });
 
