@@ -1,2 +1,4 @@
-# day-time
+# Day Time
 A simple day planner app
+
+
