@@ -50,6 +50,30 @@ function drag(ev) {
 	//ev.dataTransfer.setData("id", ev.target.id);
 }
 
+function resize(ev) {
+	console.log("resizing");
+	ev.dataTransfer.setData("id", ev.target.id);
+	//ev.stopPropagation();
+}
+
+// mouse handler
+const mouse = {};
+mouse.x = 0;
+mouse.y = 0;
+mouseDownY = 0;
+
+const mouseDownHandler = (ev) => {
+	//console.log("down girl!");
+	mouseDownY = ev.clientY;
+}
+
+const handleMouseMove = (ev) => {
+	mouse.x = ev.clientX;
+	mouse.y = ev.clientY;
+}
+$( document ).ready(function() {
+	document.ondrag = handleMouseMove;
+});
 
 // Create three demo events
 
