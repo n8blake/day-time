@@ -32,15 +32,18 @@
 			
 			<div class="list-group-flush">
 				<div class="list-group-item" ng-repeat="time in timeblocks">
-					<div class="row hour-block" >
-						<div class="col-2 time-header">{{time | numberAsTime}}</div>
+					<div class="row time-block" >
+						<div class="col-md-2 col-sm-1 center-vertical time-header" ng-if="(time % 1 === 0)">{{time | numberAsTime}}</div>
 						<div class="col-10 event-container d-flex justify-content-left" ondrop="drop(event)" ondragover="allowDrop(event)" ng-drop="dropped(time)">
-							<div class="event grab" draggable="true" ondragstart="drag(event)" ng-repeat="event in getEvents(time)" ng-attr-id="id-{{event.id}}" ng-style="{'height': (event.length * 60 + 'pt')}" ng-drag="dragging(event)" >
-								<h6 class="event-title" ng-model="event.title" ng-attr-id="title-{{event.id}}" ng-click="editEvent(event)" contenteditable="true" ng-blur="endEdit(event)">{{event.title | truncate}}</h6>
-								<p ng-if="event.description" >{{event.description}}</p>
-								<button class="btn btn-sm btn-outline-success" ng-click="deleteEvent(event)">delete</button>
+							<div class="event grab d-flex justify-content-left" draggable="true" ondragstart="drag(event)" ng-repeat="event in getEvents(time)" ng-attr-id="id-{{event.id}}" ng-style="{'height': (event.length * 60 + 'pt')}" ng-drag="dragging(event)" >
+								<!--<i class="fas fa-bars m-1 center-vertical"></i>-->
+								<h6 class="event-title " ng-model="event.title" ng-attr-id="title-{{event.id}}" ng-click="editEvent(event)" contenteditable="true" ng-blur="endEdit(event)">{{event.title | truncate}}</h6>
+								<!--<p ng-if="event.description" >{{event.description}}</p>-->
+								<!--<button class="btn btn-sm btn-outline-success " ng-click="deleteEvent(event)">delete</button>-->
+								<i class="fas fa-grip-lines event-length-grabber" ng-attr-id="event-length-grabber-{{event.id}}" draggable="true" ng-click="setActiveEvent(event)" ondragstart="resize(event)" ng-drag="updateEventLength(event)" onmousedown="mouseDownHandler(event)" ng-dragstart="startUpdateLength(event)" ng-dragend="endUpdateLength(event)"></i>
+								<button class="btn" ng-click="deleteEvent(event)"><i class="far fa-trash-alt event-delete"></i></button>
 							</div>
-							<div class="newEventSpaceDiv" ng-click="newEvent(time)" style="width: 100%;"> </div>
+							<div class="newEventSpaceDiv" ng-click="newEvent(time)"><i class="fas fa-plus-square"></i></div>
 						</div>
 						
 					</div>

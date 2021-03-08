@@ -1,6 +1,6 @@
 var app = angular.module("App", ['ngDrag']);
 
-const MAX_TITLE_LENGTH = 64;
+const MAX_TITLE_LENGTH = 24;
 
 app.controller("DayCtrl", ['$scope', function($scope){
 	let today = moment();
@@ -14,6 +14,7 @@ app.controller("DayCtrl", ['$scope', function($scope){
 app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filter, events) {
 	
 	$scope.activeEvent = {};
+	$scope.updatingEventLength = false;
 	$scope.tasks = [];
 	
 	$scope.events = events.getEvents();
@@ -29,6 +30,7 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 
 	$scope.timeblocks = [];
 	for(let i = 0; i < 24; i++){
+		//let t = i / 4;
 		$scope.timeblocks.push(i);
 	}
 
@@ -68,7 +70,7 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	}
 
 	$scope.dragging = (event) => {
-		console.log("dragging");
+		//console.log("dragging");
 		$scope.activeEvent = event;
 		document.querySelector("#id-" + event.id).classList.remove('grab');
 		document.querySelector("#id-" + event.id).classList.add('grabbing');
@@ -77,19 +79,26 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	$scope.dropped = (time) => {
 		console.log("Dropped!");
 		console.log(time);
-		let receivedEvent = $scope.activeEvent;
-		$scope.activeEvent = {};
-		console.log(receivedEvent);
+		if(!$scope.updatingEventLength){
+			let receivedEvent = $scope.activeEvent;
+			$scope.activeEvent = {};
+			console.log(receivedEvent);
 
-		let newStartTime = moment().hour(time).minutes(0).seconds(0).valueOf();
-		let minutes = receivedEvent.length * 60;
-		let newEndTime = moment().hour(time).minutes(minutes).seconds(0).valueOf();
-		events.updateEventTime(receivedEvent.id, newStartTime, false);
-		events.updateEventTime(receivedEvent.id, newEndTime, true);
-		document.querySelector("#id-" + receivedEvent.id).classList.remove('grabbing');
-		document.querySelector("#id-" + receivedEvent.id).classList.add('grab');
+			let newStartTime = moment().hour(time).minutes(0).seconds(0).valueOf();
+			let minutes = receivedEvent.length * 60;
+			let newEndTime = moment().hour(time).minutes(minutes).seconds(0).valueOf();
+			events.updateEventTime(receivedEvent.id, newStartTime, false);
+			events.updateEventTime(receivedEvent.id, newEndTime, true);
+			document.querySelector("#id-" + receivedEvent.id).classList.remove('grabbing');
+			document.querySelector("#id-" + receivedEvent.id).classList.add('grab');
+		} else {
+			// deal with event length update
+
+		}
 	}
 
+	// event in the context of these functions is
+	// a CalendarEvent, not a document based event
 	$scope.getEvents = (timeblock) => {
 		return events.getEventsForTimeblock(timeblock);
 	}
@@ -98,6 +107,59 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		console.log("Deleting " + event.id);
 		events.deleteEvent(event.id);
 	}
+
+	$scope.setActiveEvent = (event) => {
+		console.log("setting activeEvent");
+		$scope.activeEvent = event;
+		let activeEventElement = document.querySelector("#id-" + event.id);
+		activeEventElement.draggable = false;
+	}
+
+	let timeOffset = 0;
+	let baseTimeLength = 1;
+	$scope.updateEventLength = (event) => {
+		//console.log("dragging length");
+		//console.log(event.length);
+		let offset = (mouse.y - mouseDownY) * (3/4) / 15;
+		offset = Math.round(offset);
+		if(timeOffset != offset){
+			// the increment cannon make the event less than 15 minues... 
+			timeOffset = offset;
+			//if()
+			event.length = baseTimeLength + (timeOffset / 4);
+			console.log("change: " + offset);
+		}
+		
+	}
+
+	$scope.startUpdateLength = (event) => {
+		console.log("Start update length");
+		baseTimeLength = event.length;
+		//mouseYStart = mouse.y;
+		//console.log(mouse.y);
+		//document.addEventListener("mousemove", handleMouseMove);
+		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 0;
+
+		//document.querySelector("#event-length-grabber-" + event.id).style.cursor = "none";
+		$scope.activeEvent = event;
+		$scope.updatingEventLength = true;
+	}
+
+	$scope.endUpdateLength = (event) => {
+		console.log("end update length");
+		//console.log(mouse.y);
+		//document.removeEventListener("mousemove", handleMouseMove);
+		$scope.updatingEventLength = false;
+		$scope.activeEvent = {};
+		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 1;
+		//document.querySelector("#event-length-grabber-" + event.id).style.cursor = "ns-resize";
+		//let offset = (mouse.y - mouseDownY) * (3/4);
+		console.log("Final Offset: " + timeOffset);
+		timeOffset = 0;
+	}
+
+	// ev is the mouse move event, not a CalendarEvent
+	//$scope.
 
 }]);
 
