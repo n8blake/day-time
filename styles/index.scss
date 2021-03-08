@@ -1,3 +1,8 @@
+:root{
+  --l: 50%;
+  --event-red: 0, 100%; 
+}
+
 body {
   position: relative;
 }
@@ -20,7 +25,6 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  
 }
 
 .time-header {
@@ -28,12 +32,13 @@ body {
 }
 
 .event {
-  background-color: hsla(120, 30%, 90%, 70%);
-  color: hsla(120, 100%, 15%, 90%);
+  /*background-color: hsla(120, 30%, 90%, 70%);
+  color: hsla(120, 100%, 15%, 90%);*/
   padding: 8pt;
   border-radius: .2rem;
-  border-left: .2rem solid hsl(120, 100%, 15%);
-  border-right: solid .2rem hsl(120, 30%, 90%);
+  /*
+  border-left: .2rem solid;
+  border-right: .2rem solid;*/
   border-top: none;
   border-bottom: none;
   position: relative;
@@ -43,6 +48,34 @@ body {
   margin-left: 2pt;
   margin-bottom: 0pt;
   width: 100%;
+}
+
+.event-green {
+  background-color: hsla(120, 30%, 90%, 70%);
+  color: hsla(120, 100%, 15%, 90%);
+  border-left: .2rem solid hsl(120, 100%, 15%);
+  border-right: solid .2rem hsl(120, 30%, 90%);
+}
+
+.event-red {
+  background-color: hsla(0, 30%, 90%, 70%);
+  color: hsla(0, 100%, 25%, 90%);
+  border-left: .2rem solid hsla(0, 100%, 25%, 90%);
+  border-right: .2rem solid hsla(0, 30%, 90%, 70%);
+}
+
+.event-yellow {
+  background-color: hsla(50, 30%, 90%, 70%);
+  color: hsla(50, 100%, 25%, 90%);
+  border-left: .2rem solid hsla(50, 100%, 25%, 90%);
+  border-right: .2rem solid hsla(50, 30%, 90%, 70%);
+}
+
+.event-blue {
+  background-color: hsla(220, 30%, 90%, 70%);
+  color: hsla(220, 100%, 25%, 90%);
+  border-left: .2rem solid hsla(220, 100%, 25%, 90%);
+  border-right: .2rem solid hsla(220, 30%, 90%, 70%);
 }
 
 .event-container > :first-child {
@@ -63,6 +96,7 @@ body {
   left: 20pt;
   padding: 6pt;
   max-width: 90%;
+  top: 5%;
 }
 
 .event-length-grabber {
@@ -70,19 +104,51 @@ body {
   bottom: 1pt;
   transform: translateX(50%);
   left: 50%;
-  /*color: hsl(120, 100%, 15%);*/
-  color: #F00;
+  opacity: 0.5;
   font-size: 8pt;
   cursor: ns-resize;
 }
 
-.event-delete {
+.event-options {
   position: absolute;
   top: 50%;
   right: 8pt;
   transform: translateY(-50%);
   font-size: 10pt;
   cursor: pointer;
+  display: none;
+}
+
+.event-color-palet {
+  display: none;
+  position: absolute;
+  top: 10pt;
+  right: 40pt;
+  width: 200%;
+  background-color: #FFF;
+  padding: 8pt;
+  border-radius: .2rem;
+  transform: translateY(-50%);
+}
+
+.event-color-palet-option {
+  font-size: 16pt;
+  margin: 2pt;
+}
+.green {
+  color: hsla(120, 100%, 15%, 90%);
+}
+
+.red {
+  color: hsla(0, 100%, 15%, 90%);
+}
+
+.yellow {
+  color: hsla(50, 100%, 15%, 90%);
+}
+
+.blue {
+  color: hsla(220, 100%, 15%, 90%);
 }
 
 .list-group-item {
@@ -96,7 +162,6 @@ body {
   right: -16%;
   width: 116%;
   height: 100%;
-  background-color: #0000FF33;
 }
 
 @media screen and (max-width: 576px){

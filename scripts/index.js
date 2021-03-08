@@ -12,6 +12,7 @@ class CalendarEvent {
 		this.start = new Date(start);
 		this.end = new Date(end);
 		this.title = null;
+		this.color = "green";
 		this.id = uuidv4();
 		this.length = (this.end.getTime() - this.start.getTime()) / 60 / 60 / 1000;
 	}

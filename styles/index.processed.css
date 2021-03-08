@@ -1,3 +1,8 @@
+:root {
+  --l: 50%;
+  --event-red: 0, 100%;
+}
+
 body {
   position: relative;
 }
@@ -27,12 +32,13 @@ body {
 }
 
 .event {
-  background-color: rgba(222, 237, 222, 0.7);
-  color: rgba(0, 77, 0, 0.9);
+  /*background-color: hsla(120, 30%, 90%, 70%);
+  color: hsla(120, 100%, 15%, 90%);*/
   padding: 8pt;
   border-radius: 0.2rem;
-  border-left: 0.2rem solid #004d00;
-  border-right: solid 0.2rem #deedde;
+  /*
+  border-left: .2rem solid;
+  border-right: .2rem solid;*/
   border-top: none;
   border-bottom: none;
   position: relative;
@@ -42,6 +48,34 @@ body {
   margin-left: 2pt;
   margin-bottom: 0pt;
   width: 100%;
+}
+
+.event-green {
+  background-color: rgba(222, 237, 222, 0.7);
+  color: rgba(0, 77, 0, 0.9);
+  border-left: 0.2rem solid #004d00;
+  border-right: solid 0.2rem #deedde;
+}
+
+.event-red {
+  background-color: rgba(237, 222, 222, 0.7);
+  color: rgba(128, 0, 0, 0.9);
+  border-left: 0.2rem solid rgba(128, 0, 0, 0.9);
+  border-right: 0.2rem solid rgba(237, 222, 222, 0.7);
+}
+
+.event-yellow {
+  background-color: rgba(237, 235, 222, 0.7);
+  color: rgba(128, 106, 0, 0.9);
+  border-left: 0.2rem solid rgba(128, 106, 0, 0.9);
+  border-right: 0.2rem solid rgba(237, 235, 222, 0.7);
+}
+
+.event-blue {
+  background-color: rgba(222, 227, 237, 0.7);
+  color: rgba(0, 43, 128, 0.9);
+  border-left: 0.2rem solid rgba(0, 43, 128, 0.9);
+  border-right: 0.2rem solid rgba(222, 227, 237, 0.7);
 }
 
 .event-container > :first-child {
@@ -62,6 +96,7 @@ body {
   left: 20pt;
   padding: 6pt;
   max-width: 90%;
+  top: 5%;
 }
 
 .event-length-grabber {
@@ -69,19 +104,52 @@ body {
   bottom: 1pt;
   transform: translateX(50%);
   left: 50%;
-  /*color: hsl(120, 100%, 15%);*/
-  color: #F00;
+  opacity: 0.5;
   font-size: 8pt;
   cursor: ns-resize;
 }
 
-.event-delete {
+.event-options {
   position: absolute;
   top: 50%;
   right: 8pt;
   transform: translateY(-50%);
   font-size: 10pt;
   cursor: pointer;
+  display: none;
+}
+
+.event-color-palet {
+  display: none;
+  position: absolute;
+  top: 10pt;
+  right: 40pt;
+  width: 200%;
+  background-color: #FFF;
+  padding: 8pt;
+  border-radius: 0.2rem;
+  transform: translateY(-50%);
+}
+
+.event-color-palet-option {
+  font-size: 16pt;
+  margin: 2pt;
+}
+
+.green {
+  color: rgba(0, 77, 0, 0.9);
+}
+
+.red {
+  color: rgba(77, 0, 0, 0.9);
+}
+
+.yellow {
+  color: rgba(77, 64, 0, 0.9);
+}
+
+.blue {
+  color: rgba(0, 26, 77, 0.9);
 }
 
 .list-group-item {
@@ -95,7 +163,6 @@ body {
   right: -16%;
   width: 116%;
   height: 100%;
-  background-color: #0000FF33;
 }
 
 @media screen and (max-width: 576px) {
