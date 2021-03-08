@@ -9,9 +9,8 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	$scope.tasks = [];
 	$scope.today = moment().format('LL');
 	$scope.events = events.getEvents();
-
 	$scope.message = "Good morning.";
-	//console.log(moment().hour());
+
 	if(moment().hour() >= 12 && moment().hour() < 17){
 		$scope.message = "Good afternoon.";
 	} else if(moment().hour() >= 17){
@@ -19,6 +18,8 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	}
 
 	$scope.timeblocks = [];
+	
+	// start the day at 4 am
 	for(let i = 4; i < 23; i++){
 		$scope.timeblocks.push(i);
 	}
@@ -38,11 +39,9 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		if(event.title.length > MAX_TITLE_LENGTH){
 			document.querySelector("#title-" + event.id).textContent = event.title;	
 		}
-
 	}
 
 	$scope.endEdit = (event) => {
-		//console.log(event);
 		let activeEvent = document.querySelector("#id-" + event.id);
 		let activeEventTitle = document.querySelector("#title-" + event.id).textContent;
 		events.updateEventTitle(event.id, activeEventTitle);
