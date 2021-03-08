@@ -1,6 +1,6 @@
 var app = angular.module("App", ['ngDrag']);
 
-const MAX_TITLE_LENGTH = 24;
+var MAX_TITLE_LENGTH = 32;
 
 app.controller("DayCtrl", ['$scope', function($scope){
 	let today = moment();
@@ -29,7 +29,7 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	}
 
 	$scope.timeblocks = [];
-	for(let i = 0; i < 24; i++){
+	for(let i = 4; i < 23; i++){
 		//let t = i / 4;
 		$scope.timeblocks.push(i);
 	}
@@ -39,7 +39,7 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		let startTime = moment().hour(time).minutes(0).valueOf();
 		let endTime = moment().hour(time + 1).minutes(0).valueOf();
 		let newEvent = new CalendarEvent(startTime, endTime);
-		newEvent.title = "Appointment";
+		newEvent.title = "New Appointment";
 		events.addEvent(newEvent);
 		console.log("Created new event: " + newEvent.id);
 	};
@@ -151,15 +151,31 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		//document.removeEventListener("mousemove", handleMouseMove);
 		$scope.updatingEventLength = false;
 		$scope.activeEvent = {};
-		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 1;
+		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 0.5;
 		//document.querySelector("#event-length-grabber-" + event.id).style.cursor = "ns-resize";
 		//let offset = (mouse.y - mouseDownY) * (3/4);
 		console.log("Final Offset: " + timeOffset);
+		events.updateEventLength(event.id, event.length);
 		timeOffset = 0;
 	}
 
-	// ev is the mouse move event, not a CalendarEvent
-	//$scope.
+	$scope.updateEventColor = (event, color) => {
+		event.color = color;
+		document.querySelector("#event-color-palet-" + event.id).style.display = 'none';
+		events.updateEventColor(event.id, color);
+	}
+
+	$scope.showColorOptions = (event) => {
+		document.querySelector('#event-color-palet-' + event.id).style.display = 'flex';
+	}
+
+	$scope.showEventOptions = (event) => {
+		document.querySelector('#event-options-' + event.id).style.display = 'block';
+	}
+
+	$scope.hideEventOptions = (event) => {
+		document.querySelector('#event-options-' + event.id).style.display = 'none';
+	}
 
 }]);
 
@@ -185,6 +201,16 @@ app.factory('events', [function(){
 
 	obj.updateEventTitle = (eventId, title) => {
 		getEventById(eventId).title = title;
+		saveEvents();
+	}
+
+	obj.updateEventLength = (eventId, length) => {
+		getEventById(eventId).length = length;
+		saveEvents();
+	}
+
+	obj.updateEventColor = (eventId, color) => {
+		getEventById(eventId).color = color;
 		saveEvents();
 	}
 
