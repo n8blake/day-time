@@ -1,3 +1,4 @@
+// UUID Function for generating IDs for calendar events
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -17,9 +18,6 @@ class CalendarEvent {
 		this.length = (this.end.getTime() - this.start.getTime()) / 60 / 60 / 1000;
 	}
 };
-
-console.log(moment().calendar());
-console.log(moment().add(2, 'hour').calendar());
 
 Date.prototype.addHours = function(h) {
 	this.setTime(this.getTime() + (h*60*60*1000));
@@ -43,18 +41,6 @@ function preventDrop(ev) {
 function drop(ev) {
 	ev.preventDefault();
 	ev.stopPropagation();
-	//var data = ev.dataTransfer.getData("id");
-	//ev.target.appendChild(document.getElementById(data));
-}
-
-function drag(ev) {
-	//ev.dataTransfer.setData("id", ev.target.id);
-}
-
-function resize(ev) {
-	console.log("resizing");
-	ev.dataTransfer.setData("id", ev.target.id);
-	//ev.stopPropagation();
 }
 
 // mouse handler
@@ -64,7 +50,6 @@ mouse.y = 0;
 mouseDownY = 0;
 
 const mouseDownHandler = (ev) => {
-	//console.log("down girl!");
 	mouseDownY = ev.clientY;
 }
 
@@ -72,6 +57,7 @@ const handleMouseMove = (ev) => {
 	mouse.x = ev.clientX;
 	mouse.y = ev.clientY;
 }
+
 $( document ).ready(function() {
 	document.ondrag = handleMouseMove;
 });
@@ -79,12 +65,9 @@ $( document ).ready(function() {
 // Create three demo events
 
 let startTime = moment().hour(8).minutes(0).seconds(0).valueOf();
-//let endTime = moment().hour(8).minutes(30).seconds(0).valueOf();
 let endTime = moment().hour(8).minutes(45).seconds(0).valueOf();
 let breakfast = new CalendarEvent(startTime, endTime);
 breakfast.title = "Breakfast";
-
-console.log(breakfast.length);
 
 let lstartTime = moment().hour(11).minutes(0).seconds(0).valueOf();
 let lendTime = moment().hour(13).minutes(0).seconds(0).valueOf();
@@ -101,5 +84,3 @@ dinner.description = "Dinner at the nice restaurant.";
 calendarEvents.push(breakfast);
 calendarEvents.push(lunch);
 calendarEvents.push(dinner);
-
-console.log(calendarEvents);

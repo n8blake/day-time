@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
 	<!--  Styles  -->
@@ -18,26 +18,26 @@
 			rel="stylesheet"
 		/>
 		<link rel="stylesheet" href="styles/index.processed.css" />
-		<title>Work Day Scheduler</title>
+		<title>Day Time</title>
 	</head>
 	<body ng-app="App">
-		<header class="jumbotron" ng-controller="DayCtrl">
-			<h1 class="display-3">Work Day Scheduler</h1>
-			<p class="lead">A simple calendar app for scheduling your work day</p>
-			<p id="currentDay" class="lead">Today is {{today}}</p>
-			<p id="tomorrow" class="lead">Tomorrow is {{tomorrow}}</p>
+		<header class="jumbotron" >
+			<h1 class="display-3">Day Time</h1>
+			<p class="lead">A simple planner app for organizing your day.</p>
+			<p class="lead">Click on a space to add a new event. Drag the events to change their start time. Pull down on the events to change their time length!</p>
+
 		</header>
 		<div class="container" ng-controller="AppCtrl">
-			<div id="message">{{message}}</div>
+			<div id="message" class="sticky-top">{{message}} Today is {{today}}.</div>
 			
 			<div class="list-group-flush">
 				<div class="list-group-item" ng-repeat="time in timeblocks">
 					<div class="row time-block" >
 						<div class="col-md-2 col-sm-1 center-vertical time-header" ng-if="(time % 1 === 0)">{{time | numberAsTime}}</div>
 						<div class="col-10 event-container d-flex justify-content-left" ondrop="drop(event)" ondragover="allowDrop(event)" ng-drop="dropped(time)">
-							<div class="event grab d-flex justify-content-left" draggable="true" ondragstart="drag(event)" ng-repeat="event in getEvents(time)" ng-attr-id="id-{{event.id}}" ng-class="{'event-green':(event.color === 'green'), 'event-red':(event.color === 'red'), 'event-yellow':(event.color === 'yellow'), 'event-blue':(event.color === 'blue')}" ng-style="{'height': (event.length * 60 + 'pt')}" ng-drag="dragging(event)" ng-mouseenter="showEventOptions(event)" ng-mouseleave="hideEventOptions(event)">
+							<div class="event grab d-flex justify-content-left" draggable="true"  ng-repeat="event in getEvents(time)" ng-attr-id="id-{{event.id}}" ng-class="{'event-green':(event.color === 'green'), 'event-red':(event.color === 'red'), 'event-yellow':(event.color === 'yellow'), 'event-blue':(event.color === 'blue')}" ng-style="{'height': (event.length * 60 + 'pt')}" ng-drag="dragging(event)" ng-mouseenter="showEventOptions(event)" ng-mouseleave="hideEventOptions(event)" >
 								<h6 class="event-title " ng-model="event.title" ng-attr-id="title-{{event.id}}" ng-click="editEvent(event)" contenteditable="true" ng-blur="endEdit(event)" >{{event.title | truncate}}</h6>
-								<i class="fas fa-grip-lines event-length-grabber" ng-attr-id="event-length-grabber-{{event.id}}" draggable="true" ng-click="setActiveEvent(event)" ondragstart="resize(event)" ng-drag="updateEventLength(event)" onmousedown="mouseDownHandler(event)" ng-dragstart="startUpdateLength(event)" ng-dragend="endUpdateLength(event)"></i>
+								<i class="fas fa-grip-lines event-length-grabber" ng-attr-id="event-length-grabber-{{event.id}}" draggable="true" ng-click="setActiveEvent(event)" ng-drag="updateEventLength(event)" onmousedown="mouseDownHandler(event)" ng-dragstart="startUpdateLength(event)" ng-dragend="endUpdateLength(event)"></i>
 								<div class="event-options" ng-attr-id="event-options-{{event.id}}">
 									<div class="justify-content-between event-color-palet" ng-attr-id="event-color-palet-{{event.id}}">
 										<i class="fas fa-circle event-color-palet-option red" ng-click="updateEventColor(event, 'red')"></i>

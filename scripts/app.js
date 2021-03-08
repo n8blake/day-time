@@ -1,24 +1,14 @@
 var app = angular.module("App", ['ngDrag']);
 
-var MAX_TITLE_LENGTH = 32;
-
-app.controller("DayCtrl", ['$scope', function($scope){
-	let today = moment();
-	let tomorrow = moment().add(24, 'hour');
-	let newDate = moment(tomorrow).format('LL');
-	console.log(newDate);
-	$scope.today = today.format('LL');
-	$scope.tomorrow = tomorrow.format('LL');
-}]);
+var MAX_TITLE_LENGTH = 42;
 
 app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filter, events) {
 	
 	$scope.activeEvent = {};
 	$scope.updatingEventLength = false;
 	$scope.tasks = [];
-	
+	$scope.today = moment().format('LL');
 	$scope.events = events.getEvents();
-	console.log($scope.events);
 
 	$scope.message = "Good morning.";
 	//console.log(moment().hour());
@@ -30,23 +20,18 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 
 	$scope.timeblocks = [];
 	for(let i = 4; i < 23; i++){
-		//let t = i / 4;
 		$scope.timeblocks.push(i);
 	}
 
 	$scope.newEvent = (time) => {
-		//console.log(time);
 		let startTime = moment().hour(time).minutes(0).valueOf();
 		let endTime = moment().hour(time + 1).minutes(0).valueOf();
 		let newEvent = new CalendarEvent(startTime, endTime);
 		newEvent.title = "New Appointment";
 		events.addEvent(newEvent);
-		console.log("Created new event: " + newEvent.id);
 	};
 
 	$scope.editEvent = (event) => {
-		console.log(event.id);
-		console.log(event.title);
 		let activeEvent = document.querySelector("#id-" + event.id);
 		activeEvent.draggable = false;
 		$scope.activeEvent = activeEvent;
@@ -60,30 +45,22 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 		//console.log(event);
 		let activeEvent = document.querySelector("#id-" + event.id);
 		let activeEventTitle = document.querySelector("#title-" + event.id).textContent;
-		console.log(activeEventTitle);
 		events.updateEventTitle(event.id, activeEventTitle);
-		console.log(event.id + " updated");
 		$scope.activeEvent.draggable = true;
 		$scope.activeEvent = {};
-		console.log($filter('truncate')(event.title));
 		document.querySelector("#title-" + event.id).textContent = $filter('truncate')(event.title);
 	}
 
 	$scope.dragging = (event) => {
-		//console.log("dragging");
 		$scope.activeEvent = event;
 		document.querySelector("#id-" + event.id).classList.remove('grab');
 		document.querySelector("#id-" + event.id).classList.add('grabbing');
 	}
 
 	$scope.dropped = (time) => {
-		console.log("Dropped!");
-		console.log(time);
 		if(!$scope.updatingEventLength){
 			let receivedEvent = $scope.activeEvent;
 			$scope.activeEvent = {};
-			console.log(receivedEvent);
-
 			let newStartTime = moment().hour(time).minutes(0).seconds(0).valueOf();
 			let minutes = receivedEvent.length * 60;
 			let newEndTime = moment().hour(time).minutes(minutes).seconds(0).valueOf();
@@ -91,10 +68,7 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 			events.updateEventTime(receivedEvent.id, newEndTime, true);
 			document.querySelector("#id-" + receivedEvent.id).classList.remove('grabbing');
 			document.querySelector("#id-" + receivedEvent.id).classList.add('grab');
-		} else {
-			// deal with event length update
-
-		}
+		} 
 	}
 
 	// event in the context of these functions is
@@ -104,12 +78,10 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 	}
 
 	$scope.deleteEvent = (event) => {
-		console.log("Deleting " + event.id);
 		events.deleteEvent(event.id);
 	}
 
 	$scope.setActiveEvent = (event) => {
-		console.log("setting activeEvent");
 		$scope.activeEvent = event;
 		let activeEventElement = document.querySelector("#id-" + event.id);
 		activeEventElement.draggable = false;
@@ -117,44 +89,29 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 
 	let timeOffset = 0;
 	let baseTimeLength = 1;
+
 	$scope.updateEventLength = (event) => {
-		//console.log("dragging length");
-		//console.log(event.length);
 		let offset = (mouse.y - mouseDownY) * (3/4) / 15;
 		offset = Math.round(offset);
 		if(timeOffset != offset){
 			// the increment cannon make the event less than 15 minues... 
 			timeOffset = offset;
-			//if()
 			event.length = baseTimeLength + (timeOffset / 4);
-			console.log("change: " + offset);
 		}
 		
 	}
 
 	$scope.startUpdateLength = (event) => {
-		console.log("Start update length");
 		baseTimeLength = event.length;
-		//mouseYStart = mouse.y;
-		//console.log(mouse.y);
-		//document.addEventListener("mousemove", handleMouseMove);
 		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 0;
-
-		//document.querySelector("#event-length-grabber-" + event.id).style.cursor = "none";
 		$scope.activeEvent = event;
 		$scope.updatingEventLength = true;
 	}
 
 	$scope.endUpdateLength = (event) => {
-		console.log("end update length");
-		//console.log(mouse.y);
-		//document.removeEventListener("mousemove", handleMouseMove);
 		$scope.updatingEventLength = false;
 		$scope.activeEvent = {};
 		document.querySelector("#event-length-grabber-" + event.id).style.opacity = 0.5;
-		//document.querySelector("#event-length-grabber-" + event.id).style.cursor = "ns-resize";
-		//let offset = (mouse.y - mouseDownY) * (3/4);
-		console.log("Final Offset: " + timeOffset);
 		events.updateEventLength(event.id, event.length);
 		timeOffset = 0;
 	}
@@ -179,7 +136,6 @@ app.controller("AppCtrl", ['$scope', '$filter', 'events', function($scope, $filt
 
 }]);
 
-
 app.factory('events', [function(){
 	obj = {};
 	obj.events = [];
@@ -191,10 +147,7 @@ app.factory('events', [function(){
 	}
 
 	obj.deleteEvent = (eventId) => {
-		console.log("EVENTID: " + eventId);
 		let event = getEventById(eventId);
-		console.log(event);
-		console.log("INDEX: " + obj.events.indexOf(event));
 		obj.events.splice(obj.events.indexOf(event), 1);
 		saveEvents();
 	}
@@ -216,7 +169,6 @@ app.factory('events', [function(){
 
 	obj.updateEventTime = (eventId, time, end) => {
 		obj.events.forEach(event => {
-			//console.log(moment(event.start).hour());
 			if(event.id === eventId){
 				if(end){
 					event.end = time;		
@@ -232,9 +184,7 @@ app.factory('events', [function(){
 	// are in that block
 	obj.getEventsForTimeblock = (timeblock) => {
 		let eventsInThisTimeBlock = [];
-		//console.log(timeblock);
 		obj.events.forEach(event => {
-			//console.log(moment(event.start).hour());
 			if(moment(event.start).hour() === timeblock) eventsInThisTimeBlock.push(event);
 		});
 		return eventsInThisTimeBlock;
@@ -249,8 +199,6 @@ app.factory('events', [function(){
 		var foundEvent = null;
 		obj.events.forEach(event => {
 			if(event.id === id){
-				console.log(event);
-				console.log(obj.events.indexOf(event));
 				foundEvent = obj.events[obj.events.indexOf(event)];
 			};
 		});
@@ -261,12 +209,11 @@ app.factory('events', [function(){
 	const getEvents = () => {
 		let events = localStorage.getItem('events');
 		if(events === null){
-			//localStorage.setItem('events', '');
+			// If there are no calendar event, add placer holder events
 			obj.events = calendarEvents;
 			saveEvents();
 		} else {
 			obj.events = JSON.parse(events);
-			//obj.events = calendarEvents;
 		}
 	}
 
@@ -279,14 +226,12 @@ app.factory('events', [function(){
 }]);
 
 app.filter('numberAsTime', function() {
-	//console.log(param);
 	return function(hour) {
 		return moment().hour(hour).minute(0).format('h:mm a');
 	};
 });
 
 app.filter('truncate', function() {
-	//console.log(param);
 	return function(title) {
 		if(title.length > MAX_TITLE_LENGTH){
 			let str = title.slice(0, MAX_TITLE_LENGTH - 4);
@@ -297,26 +242,23 @@ app.filter('truncate', function() {
 	};
 });
 
+// Code for enableing drag events to work nicely with AngularJS
 (function(){
 	var ngDragEventDirectives = {};
-
 	angular.forEach(
 		'drag dragend dragenter dragexit dragleave dragover dragstart drop'.split(' '),
 		function(eventName) {
 			var directiveName = 'ng' + eventName.charAt(0).toUpperCase() + eventName.slice(1);
-
 			ngDragEventDirectives[directiveName] = ['$parse', '$rootScope', function($parse, $rootScope) {
 				return {
 					restrict: 'A',
 					compile: function($element, attr) {
 						var fn = $parse(attr[directiveName], null, true);
-
 						return function ngDragEventHandler(scope, element) {
 							element.on(eventName, function(event) {
 								var callback = function() {
 									fn(scope, {$event: event});
 								};
-
 								scope.$apply(callback);
 							});
 						};

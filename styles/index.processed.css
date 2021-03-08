@@ -1,10 +1,7 @@
-:root {
-  --l: 50%;
-  --event-red: 0, 100%;
-}
-
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;500&display=swap");
 body {
   position: relative;
+  font-family: "Rubik", sans-serif;
 }
 
 .container {
@@ -13,6 +10,9 @@ body {
 
 #message {
   text-align: center;
+  background-color: #FFFD;
+  width: 100%;
+  padding: 20pt;
 }
 
 .time-block {
@@ -32,13 +32,8 @@ body {
 }
 
 .event {
-  /*background-color: hsla(120, 30%, 90%, 70%);
-  color: hsla(120, 100%, 15%, 90%);*/
   padding: 8pt;
   border-radius: 0.2rem;
-  /*
-  border-left: .2rem solid;
-  border-right: .2rem solid;*/
   border-top: none;
   border-bottom: none;
   position: relative;
@@ -97,6 +92,7 @@ body {
   padding: 6pt;
   max-width: 90%;
   top: 5%;
+  font-weight: lighter;
 }
 
 .event-length-grabber {
