@@ -8,4 +8,4 @@ Click on a space to add a new event. Drag the events to change their start time.
 
 You can see this project live at: <a href="https://n8blake.github.io/day-time/">https://n8blake.github.io/day-time/</a>
 
-<img src="Day_Time_demo.git" alt="Day Time demo animation">
+<img src="Day_Time_demo.gif" alt="Day Time demo animation">
